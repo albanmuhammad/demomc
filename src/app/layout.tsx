@@ -74,8 +74,11 @@ export default function RootLayout({
             // --- INIT MAIN INTERACTIONS SDK ---
             window.SalesforceInteractions.init({
               consents: [
-                { purpose: 'Tracking',  status: 'OptIn' },
-                { purpose: 'Analytics', status: 'OptIn' }
+                 {
+                  provider: "Test Provider",
+                  purpose: SalesforceInteractions.ConsentPurpose.Tracking,
+                  status: SalesforceInteractions.ConsentStatus.OptIn,
+                },
               ],
               debug: { logLevel: 4 }
             })
