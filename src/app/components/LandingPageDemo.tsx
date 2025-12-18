@@ -149,6 +149,41 @@ export default function LandingPageDemo() {
         return () => window.removeEventListener("sf_interactions_ready", handler);
     }, []);
 
+    useEffect(() => {
+        // kalau mau hanya setelah login:
+        if (!isLoggedIn) return;
+
+        const key = user?.email?.trim().toLowerCase() ?? "anonymous";
+        const payload = { data: { ID: key, SubscriberKey: key } };
+
+        const tryInit = (): boolean => {
+            const mcx = getMcxPush();
+            if (!mcx) return false;
+
+            mcx.initialize(payload);
+            console.log("[MCX] mcxPush.initialize called:", payload);
+            return true;
+        };
+
+        if (tryInit()) return;
+
+        // polling sampai mcxPush tersedia (script load async)
+        let attempts = 0;
+        const maxAttempts = 200; // ~10 detik
+        const intervalId = window.setInterval(() => {
+            attempts += 1;
+            const ok = tryInit();
+            if (ok || attempts >= maxAttempts) {
+                window.clearInterval(intervalId);
+                if (!ok) console.warn("[MCX] mcxPush never became available");
+            }
+        }, 50);
+
+        return () => window.clearInterval(intervalId);
+    }, [isLoggedIn, user?.email]);
+
+
+
 
 
     const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>): void => {
@@ -158,6 +193,12 @@ export default function LandingPageDemo() {
         });
         setError('');
     };
+
+    function getMcxPush(): McxPush | null {
+        if (typeof window === "undefined") return null;
+        return window.mcxPush ?? null;
+    }
+
 
     const handleSubmit = async (): Promise<void> => {
         setLoading(true);
