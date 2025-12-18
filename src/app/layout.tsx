@@ -28,6 +28,18 @@ export default function RootLayout({
   return (
     <html lang="en">
       <head>
+        <link
+          rel="manifest"
+          href="https://r2.themcx.app/514008875/demomc/manifest.json"
+        />
+
+        {/* MCX Push Script */}
+        <Script
+          id="mcx-push"
+          src="https://r2.themcx.app/514008875/demomc/mcx-push.js"
+          strategy="beforeInteractive"
+        />
+
         {/* Loader dari Web Connector (jangan diubah ID & URL-nya) */}
         <Script
           id="c360a-loader"
